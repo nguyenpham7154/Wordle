@@ -1,0 +1,15 @@
+Main
+> welcome introduction rules & menu
+generate word
+> print board letter slots
+> keyboard
+> exit/play again button
+
+Extras
+> physical keyboard entry
+> guess distribution
+> times played
+> win %
+> streak, max streak
+> time, best time
+> game mode for different word lengths

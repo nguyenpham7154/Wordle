@@ -3,6 +3,7 @@ package com.example.wordle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -14,6 +15,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
         stage.setTitle("wordleFX");
         stage.setScene(scene);
         stage.show();

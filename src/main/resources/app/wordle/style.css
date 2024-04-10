@@ -1,6 +1,6 @@
 .tile {
-    -fx-background-color: white;
-    -fx-border: 2px, #b8b9b9;
+    -fx-background-color: #d3d6da;
+    -fx-border: 2px, #878a8c;
     -fx-text-fill: black;
     -fx-font-weight: bold;
     -fx-font-size: 26px;
@@ -10,8 +10,8 @@
     -fx-alignment: center;
 }
 .key {
-    -fx-background-color: white;
-    -fx-border: 2px, #b8b9b9;
+    -fx-background-color: #d3d6da;
+    -fx-border: 2px, #878a8c;
     -fx-text-fill: black;
     -fx-font-size: 18px;
     -fx-min-width: 46px;

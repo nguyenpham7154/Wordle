@@ -1,9 +1,10 @@
 Main
 > welcome introduction rules & menu
 generate word
-> print board letter slots
+print board letter slots
 > keyboard
 > exit/play again button
+> dark mode
 
 Extras
 > physical keyboard entry

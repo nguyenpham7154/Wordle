@@ -1,18 +1,32 @@
-.Tile {
+.tile {
     -fx-background-color: white;
-    -fx-font: 28px, bold, black;
     -fx-border: 2px, #b8b9b9;
-    -fx-width: 52px;
-    -fx-height: 64px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-min-width: 64px;
+    -fx-min-height: 64px;
     -fx-text-alignment: center;
     -fx-alignment: center;
 }
-.GreenTile{
+.key {
+    -fx-background-color: white;
+    -fx-border: 2px, #b8b9b9;
+    -fx-text-fill: black;
+    -fx-font-size: 18px;
+    -fx-min-width: 46px;
+    -fx-min-height: 62px;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-background-radius: 4px;
+}
+
+.greenTile{
     -fx-background-color: #6baa64;
 }
-.YellowTile{
+.yellowTile{
     -fx-background-color: #c8b557;
 }
-.GrayTile{
+.grayTile{
     -fx-background-color: #787c7f;
 }

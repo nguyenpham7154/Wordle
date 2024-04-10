@@ -10,28 +10,36 @@ import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+import java.net.URL;
 import java.io.*;
 import java.util.*;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class Controller{
+public class Controller implements Initializable {
+    private final String[][] keyboardLetter = {
+            {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
+            {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
+            {"↵", "Z", "X", "C", "V", "B", "N", "M", "←"}};
     public static ArrayList<String> dictionary = new ArrayList<String>();
     public static ArrayList<String> guessedWords = new ArrayList<String>();
+
     public String correctWord;
-
-
-    private int rows = 5, columns = 6;
+    private int rows = 6, columns = 5;
+    private String currentWord = "";
     private int currentRow = 1, currentColumn = 1;
+
     private int gamesWon = 0, gameslost = 0, gamesPlayed = 0;
 
-    @FXML public Label debugText;
-    @FXML protected void debugButton() { // debug
-        debugText.setText("debug");
-    }
+    @FXML public Label debugText; // debug
     @FXML public GridPane tileGrid;
     @FXML public GridPane keyboard;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        loadDictonary();
+        loadKeyboard();
+        loadTileGrid();
+        getWord();
+    }
 
     public void loadDictonary() {
         try {
@@ -46,7 +54,6 @@ public class Controller{
 
     public void getWord() {
         correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1)));
-        System.out.println("dictionary.size() = " + dictionary.size()); // debug
         System.out.println("correctWord = " + correctWord); // debug
     }
 
@@ -54,7 +61,7 @@ public class Controller{
         for (int i = 1; i <= rows; i++) {
             for (int j = 1; j <= columns; j++) {
                 Label tile = new Label();
-                tile.setText("*");
+                tile.setText(" ");
                 tile.setId(j + "," + i);
                 tile.getStyleClass().add("tile");
                 tileGrid.add(tile, j, i);
@@ -63,19 +70,36 @@ public class Controller{
     }
 
     public void loadKeyboard() {
-
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < keyboardLetter[i].length; j++) {
+                Button key = new Button();
+                String keyLetter = keyboardLetter[i][j];
+                key.setText(keyLetter);
+                key.setId(keyLetter);
+                key.getStyleClass().add("key");
+                keyboard.add(key, j, i);
+            }
+        }
     }
 
     @FXML protected void keyboardInput(KeyEvent keyEvent) {
         if (keyEvent.getCode().isLetterKey()) {
-            // letterInput()
+            letterInput(keyEvent.getText());
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            // backspace()
+            // backspace();
         } else if (keyEvent.getCode() == KeyCode.ENTER) {
-            // enter()
+            // enter();
         }
     }
 
+    public void letterInput(String letter) {
+        Label tile = (Label) tileGrid.lookup(currentColumn + "," + currentRow);
+        tile.setText(letter);
+        tile.getStyleClass().clear();
+        tile.getStyleClass().add("tile");
+        currentWord += letter;
+        currentColumn++;
+    }
     public String validWord(String inputWord) {
         if (inputWord.length() != 5)
             return "word is not a 5 letter word";

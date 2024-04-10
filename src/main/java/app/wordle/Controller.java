@@ -18,7 +18,7 @@ public class Controller implements Initializable {
     private final String[][] keyboardLetter = {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
-            {"↵", "Z", "X", "C", "V", "B", "N", "M", "←"}};
+            {"ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"}};
     public static ArrayList<String> dictionary = new ArrayList<String>();
     public static ArrayList<String> guessedWords = new ArrayList<String>();
 
@@ -31,7 +31,7 @@ public class Controller implements Initializable {
 
     @FXML public Label debugText; // debug
     @FXML public GridPane tileGrid;
-    @FXML public GridPane keyboard;
+    @FXML public GridPane keyboard1, keyboard2, keyboard3;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -76,8 +76,23 @@ public class Controller implements Initializable {
                 String keyLetter = keyboardLetter[i][j];
                 key.setText(keyLetter);
                 key.setId(keyLetter);
+                key.setOnAction(letterInput(keyLetter));
                 key.getStyleClass().add("key");
-                keyboard.add(key, j, i);
+
+                if (i == 0)
+                    keyboard1.add(key, j, i);
+                else if (i == 1)
+                    keyboard2.add(key, j, i);
+                else
+                    if (j == 0) {
+                        key.setMinWidth(69.0);
+                        key.setOnAction(enter());
+                    } else if (j == 8) {
+                        key.setMinWidth(69.0);
+                        key.setOnAction(backspace());
+                    }
+                    keyboard3.add(key, j, i);
+
             }
         }
     }
@@ -86,20 +101,33 @@ public class Controller implements Initializable {
         if (keyEvent.getCode().isLetterKey()) {
             letterInput(keyEvent.getText());
         } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
-            // backspace();
+            backspace();
         } else if (keyEvent.getCode() == KeyCode.ENTER) {
-            // enter();
+            enter();
         }
     }
 
-    public void letterInput(String letter) {
-        Label tile = (Label) tileGrid.lookup(currentColumn + "," + currentRow);
+    public EventHandler<ActionEvent> letterInput(String letter) {
+        System.out.println(letter); // debug
+        String id = "#" + currentColumn + "," + currentRow;
+        Label tile = (Label) tileGrid.lookup(id);
         tile.setText(letter);
-        tile.getStyleClass().clear();
-        tile.getStyleClass().add("tile");
+        // tile.getStyleClass().add("");
         currentWord += letter;
         currentColumn++;
+        return null;
     }
+
+    public EventHandler<ActionEvent> backspace() {
+
+        return null;
+    }
+
+    public EventHandler<ActionEvent> enter() {
+
+        return null;
+    }
+
     public String validWord(String inputWord) {
         if (inputWord.length() != 5)
             return "word is not a 5 letter word";

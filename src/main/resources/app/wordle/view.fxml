@@ -15,9 +15,9 @@
     <Label fx:id="debugText"/>
   </VBox>
 
-  <GridPane fx:id="tileGrid" onKeyPressed="#keyboardInput" alignment="CENTER" hgap="6" vgap="8">
-  </GridPane>
+  <GridPane fx:id="tileGrid" onKeyPressed="#keyboardInput" alignment="CENTER" hgap="5" vgap="5"/>
 
-  <GridPane fx:id="keyboard" alignment="CENTER" hgap="4" vgap="4">
-  </GridPane>
+  <GridPane fx:id="keyboard1" alignment="CENTER" hgap="6" vgap="4"/>
+  <GridPane fx:id="keyboard2" alignment="CENTER" hgap="6" vgap="4"/>
+  <GridPane fx:id="keyboard3" alignment="CENTER" hgap="6" vgap="4"/>
 </VBox>

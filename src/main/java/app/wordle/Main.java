@@ -9,8 +9,6 @@ import javafx.stage.Screen;
 import java.io.IOException;
 
 public class Main extends Application {
-    Controller controller = new Controller();
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("view.fxml"));
@@ -22,15 +20,6 @@ public class Main extends Application {
         stage.setTitle("wordleFX");
         stage.setScene(scene);
         stage.show();
-
-        startGame();
-    }
-
-    public void startGame() {
-        controller.loadDictonary();
-        controller.loadTileGrid();
-        controller.loadKeyboard();
-        controller.getWord();
     }
 
     public static void main(String[] args) {

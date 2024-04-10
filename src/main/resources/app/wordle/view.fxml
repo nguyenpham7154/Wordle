@@ -11,18 +11,13 @@
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
 
-  <GridPane fx:id="tileGrid" onKeyPressed="#keyboardInput" alignment="CENTER" hgap="5" vgap="5">
-
-  </GridPane>
-
-  <GridPane fx:id="keyboard" alignment="CENTER" hgap="5" vgap="5">
-
-  </GridPane>
-
   <VBox alignment="CENTER">
     <Label fx:id="debugText"/>
-    <Button text="debug" onAction="#debugButton"/>
   </VBox>
 
+  <GridPane fx:id="tileGrid" onKeyPressed="#keyboardInput" alignment="CENTER" hgap="6" vgap="8">
+  </GridPane>
 
+  <GridPane fx:id="keyboard" alignment="CENTER" hgap="4" vgap="4">
+  </GridPane>
 </VBox>

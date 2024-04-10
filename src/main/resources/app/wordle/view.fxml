@@ -12,6 +12,7 @@
   </padding>
 
   <GridPane fx:id="tileGrid" onKeyPressed="#keyboardInput" alignment="CENTER" hgap="5" vgap="5">
+
   </GridPane>
 
   <GridPane fx:id="keyboard" alignment="CENTER" hgap="5" vgap="5">

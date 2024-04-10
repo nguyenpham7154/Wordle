@@ -1,0 +1,18 @@
+.Tile {
+    -fx-background-color: white;
+    -fx-font: 28px, bold, black;
+    -fx-border: 2px, #b8b9b9;
+    -fx-width: 52px;
+    -fx-height: 64px;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+.GreenTile{
+    -fx-background-color: #6baa64;
+}
+.YellowTile{
+    -fx-background-color: #c8b557;
+}
+.GrayTile{
+    -fx-background-color: #787c7f;
+}

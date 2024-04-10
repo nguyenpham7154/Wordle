@@ -1,6 +1,7 @@
 package app.wordle;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -12,21 +13,25 @@ import javafx.event.EventHandler;
 import java.io.*;
 import java.util.*;
 
-public class Controller {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class Controller{
+    public static ArrayList<String> dictionary = new ArrayList<String>();
+    public static ArrayList<String> guessedWords = new ArrayList<String>();
+    public String correctWord;
+
+
+    private int rows = 5, columns = 6;
+    private int currentRow = 1, currentColumn = 1;
+    private int gamesWon = 0, gameslost = 0, gamesPlayed = 0;
+
     @FXML public Label debugText;
-    @FXML protected void debugButton() {
-        getWord();
-        debugText.setText("correctword: " + correctWord);
+    @FXML protected void debugButton() { // debug
+        debugText.setText("debug");
     }
     @FXML public GridPane tileGrid;
     @FXML public GridPane keyboard;
-
-    private ArrayList<String> dictionary = new ArrayList<String>();
-    private ArrayList<String> guessedWords = new ArrayList<String>();
-    private String correctWord;
-
-    private int rows = 5;
-    private int columns = 6;
 
     public void loadDictonary() {
         try {
@@ -40,16 +45,19 @@ public class Controller {
     }
 
     public void getWord() {
-        correctWord = dictionary.get((int) (Math.random() * (dictionary.size() - 1)));
+        correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1)));
+        System.out.println("dictionary.size() = " + dictionary.size()); // debug
+        System.out.println("correctWord = " + correctWord); // debug
     }
-
 
     public void loadTileGrid () {
         for (int i = 1; i <= rows; i++) {
             for (int j = 1; j <= columns; j++) {
                 Label tile = new Label();
-                // tile.getStyleClass().add("");
-                tileGrid.add(tile, j, i); // can use as id
+                tile.setText("*");
+                tile.setId(j + "," + i);
+                tile.getStyleClass().add("tile");
+                tileGrid.add(tile, j, i);
             }
         }
     }
@@ -79,18 +87,18 @@ public class Controller {
             return "valid";
     }
 
-    public void setColor(String color) {
-        switch (color) {
-            case "green":
-                //
-            case "yellow":
-                //
-            case "black":
-                //
-        }
-    }
-
     public void reset() {
+        for (int i = 1; i <= rows; i++) {
+            for (int j = 1; j <= columns; j++) {
+                Label tile = (Label) tileGrid.lookup(j + "," + i);
+                tile.setText(" ");
+                tile.getStyleClass().clear();
+                tile.getStyleClass().add("tile");
+            }
+        }
 
+        getWord();
+        guessedWords.clear();
+        currentRow = 1; currentColumn = 1;
     }
 }

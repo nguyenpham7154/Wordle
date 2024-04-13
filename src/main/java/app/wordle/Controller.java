@@ -14,7 +14,7 @@ import java.net.URL;
 import java.io.*;
 import java.util.*;
 
-public class Controller implements Initializable {
+public class Controller {
     private final String[][] keyboardLetter = {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
@@ -33,13 +33,7 @@ public class Controller implements Initializable {
     @FXML public GridPane tileGrid;
     @FXML public GridPane keyboard1, keyboard2, keyboard3;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadDictonary();
-        loadKeyboard();
-        loadTileGrid();
-        getWord();
-    }
+
 
     public void loadDictonary() {
         try {
@@ -118,7 +112,7 @@ public class Controller implements Initializable {
         Label tile = (Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow);
 
         // will only add letter if tile is empty
-        // Objects.equals(tile.getText().toLowerCase(), ""
+        // Objects.equals(tile.getText().toLowerCase(), "")
         if (currentColumn < 5) {
             tile.setText(letter);
             // tile.getStyleClass().add("");

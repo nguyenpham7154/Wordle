@@ -12,10 +12,10 @@
   </padding>
 
   <VBox alignment="CENTER">
-    <Label fx:id="debugText"/>
+    <Label fx:id="alertText"/>
   </VBox>
 
-  <GridPane fx:id="tileGrid" onKeyPressed="#keyboardInput" alignment="CENTER" hgap="5" vgap="5"/>
+  <GridPane fx:id="tileGrid" onKeyPressed="#virtualKeyboardInput" alignment="CENTER" hgap="5" vgap="5"/>
 
   <GridPane fx:id="keyboard1" alignment="CENTER" hgap="6" vgap="4"/>
   <GridPane fx:id="keyboard2" alignment="CENTER" hgap="6" vgap="4"/>

@@ -24,12 +24,12 @@ public class Controller implements Initializable {
 
     public String correctWord;
     private int rows = 6, columns = 5;
-    private String currentWord = "";
+    private String currentWord;
     private int currentRow = 1, currentColumn = 1;
 
-    private int gamesWon = 0, gameslost = 0, gamesPlayed = 0;
+    // private int gamesWon = 0, gameslost = 0, gamesPlayed = 0;
 
-    @FXML public Label debugText; // debug
+    @FXML public Label alertText; // debug
     @FXML public GridPane tileGrid;
     @FXML public GridPane keyboard1, keyboard2, keyboard3;
 
@@ -61,8 +61,8 @@ public class Controller implements Initializable {
         for (int i = 1; i <= rows; i++) {
             for (int j = 1; j <= columns; j++) {
                 Label tile = new Label();
-                tile.setText(" ");
-                tile.setId(j + "," + i);
+                tile.setText("");
+                tile.setId(j + "-" + i);
                 tile.getStyleClass().add("tile");
                 tileGrid.add(tile, j, i);
             }
@@ -76,20 +76,18 @@ public class Controller implements Initializable {
                 String keyLetter = keyboardLetter[i][j];
                 key.setText(keyLetter);
                 key.setId(keyLetter);
-                key.setOnAction(letterInput(keyLetter));
                 key.getStyleClass().add("key");
 
-                if (i == 0)
+                if (i == 0) {
                     keyboard1.add(key, j, i);
+                }
                 else if (i == 1)
                     keyboard2.add(key, j, i);
                 else
                     if (j == 0) {
                         key.setMinWidth(69.0);
-                        key.setOnAction(enter());
                     } else if (j == 8) {
                         key.setMinWidth(69.0);
-                        key.setOnAction(backspace());
                     }
                     keyboard3.add(key, j, i);
 
@@ -97,35 +95,52 @@ public class Controller implements Initializable {
         }
     }
 
-    @FXML protected void keyboardInput(KeyEvent keyEvent) {
-        if (keyEvent.getCode().isLetterKey()) {
-            letterInput(keyEvent.getText());
-        } else if (keyEvent.getCode() == KeyCode.BACK_SPACE) {
+    @FXML protected void physicalKeyboardInput(KeyEvent keyEvent) {
+        String input = keyEvent.getText();
+        if (keyEvent.getCode().isLetterKey())
+            letterInput(input);
+        else if (keyEvent.getCode() == KeyCode.BACK_SPACE)
             backspace();
-        } else if (keyEvent.getCode() == KeyCode.ENTER) {
+        else if (keyEvent.getCode() == KeyCode.ENTER)
             enter();
+    }
+
+    public void virtualKeyboardInput(ActionEvent event) {
+        Button button = (Button) event.getSource();
+        String id = button.getId();
+        Label tile = (Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow);
+
+    }
+
+    public void letterInput(String letter) {
+        System.out.println(letter); // debug
+
+        Label tile = (Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow);
+
+        // will only add letter if tile is empty
+        // Objects.equals(tile.getText().toLowerCase(), ""
+        if (currentColumn < 5) {
+            tile.setText(letter);
+            // tile.getStyleClass().add("");
+            currentWord += letter;
+            currentColumn++;
         }
     }
 
-    public EventHandler<ActionEvent> letterInput(String letter) {
-        System.out.println(letter); // debug
-        String id = "#" + currentColumn + "," + currentRow;
-        Label tile = (Label) tileGrid.lookup(id);
-        tile.setText(letter);
-        // tile.getStyleClass().add("");
-        currentWord += letter;
-        currentColumn++;
-        return null;
+    public void backspace() {
+
     }
 
-    public EventHandler<ActionEvent> backspace() {
-
-        return null;
+    public void enter() {
+        String valid = validWord(guessedWords.get(currentRow));
+        if (valid.equals("valid"))
+            currentRow++;
+        else
+            alert(valid);
     }
 
-    public EventHandler<ActionEvent> enter() {
-
-        return null;
+    public void alert(String message) {
+        alertText.setText(message);
     }
 
     public String validWord(String inputWord) {

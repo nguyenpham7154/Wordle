@@ -11,11 +11,9 @@
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
 
-  <VBox alignment="CENTER">
-    <Label fx:id="alertText"/>
-  </VBox>
+  <Label fx:id="alertText"/>
 
-  <GridPane fx:id="tileGrid" onKeyPressed="#virtualKeyboardInput" alignment="CENTER" hgap="5" vgap="5"/>
+  <GridPane fx:id="tileGrid" onKeyPressed="#physicalKeyboardInput" alignment="CENTER" hgap="5" vgap="5"/>
 
   <GridPane fx:id="keyboard1" alignment="CENTER" hgap="6" vgap="4"/>
   <GridPane fx:id="keyboard2" alignment="CENTER" hgap="6" vgap="4"/>

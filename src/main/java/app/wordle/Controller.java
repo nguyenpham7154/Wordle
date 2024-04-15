@@ -7,9 +7,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
+import javafx.scene.layout.VBox;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Controller {
     private final String[][] keyboardLetters = {
@@ -23,12 +26,11 @@ public class Controller {
     private int rows = 6, columns = 5;
     private String currentWord = "";
     private int currentRow = 1, currentColumn = 1;
-    private int gamesWon = 0, gameslost = 0, gamesPlayed = 0;
+    private int gamesWon = 0, gameslost = 0, gamesPlayed = 0, totalGusses = 0;
 
-    @FXML public VBox root;
-    @FXML public GridPane tileGrid;
-    @FXML public GridPane keyboard1, keyboard2, keyboard3;
-
+    @FXML private VBox root;
+    @FXML private GridPane tileGrid;
+    @FXML private GridPane keyboard1, keyboard2, keyboard3;
 
 
     public void loadDictonary() {
@@ -61,7 +63,8 @@ public class Controller {
 
     public void loadKeyboard() {
         //focus scene to get physical keyboard input
-        root.setOnMouseClicked(e -> root.requestFocus());
+        root.requestFocus();
+        root.setOnKeyPressed(this::physicalKeyboardInput);
         
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
@@ -86,12 +89,13 @@ public class Controller {
     }
 
     public void physicalKeyboardInput(KeyEvent keyEvent) {
-        if (keyEvent.getCode().isLetterKey())
-            onLetter(keyEvent.getText());
-        else if (keyEvent.getCode() == KeyCode.BACK_SPACE)
-            onDelete();
-        else if (keyEvent.getCode() == KeyCode.ENTER)
-            onEnter();
+        if (currentRow <= 6)
+            if (keyEvent.getCode().isLetterKey())
+                onLetter(keyEvent.getText());
+            else if (keyEvent.getCode() == KeyCode.BACK_SPACE)
+                onDelete();
+            else if (keyEvent.getCode() == KeyCode.ENTER)
+                onEnter();
     }
 
     public void virtualKeyboardInput(ActionEvent event) {
@@ -106,25 +110,22 @@ public class Controller {
             else if (id.equals("ENTER"))
                 onEnter();
 
-        // System.out.println(id); // debug
     }
 
     public void onLetter(String letter) {
         if (currentColumn <= 5) {
-            Label tile = (Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow);
-            tile.setText(letter);
+            ((Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow)).setText(letter);
             currentWord += letter;
             currentColumn++;
-            System.out.println(currentColumn + " " + currentWord); // debug
+            System.out.println(currentWord); // debug
         }
     }
 
     public void onDelete() {
-        currentColumn = Math.min(currentColumn-1, 1);
-        Label tile = (Label) tileGrid.lookup("#" +currentColumn + "-" + currentRow);
-        tile.setText("");
+        currentColumn = Math.max(currentColumn-1, 1);
+        ((Label) tileGrid.lookup("#" +currentColumn + "-" + currentRow)).setText("");
         currentWord = currentWord.substring(0, currentColumn-1);
-        System.out.println(currentColumn + " " + currentWord); // debug
+        System.out.println(currentWord); // debug
     }
 
     public void onEnter() {
@@ -144,18 +145,15 @@ public class Controller {
         } else {
             System.out.println(isValid);
         }
-
-
-        System.out.println(currentColumn + " " + currentWord); // debug
     }
 
     public String checkWord(String currentWord) {
         currentWord = currentWord.toLowerCase();
         if (currentWord.length() != 5)
             return "Not enough letters";
-        else if (!search(dictionary, currentWord)) // better word search algorithm
+        else if (!search(dictionary, currentWord))
             return "Not in word list";
-        else if (search(guessedWords, currentWord))
+        else if (guessedWords.contains(currentWord))
             return "Word already tried";
         else
             return "valid";
@@ -202,6 +200,7 @@ public class Controller {
     }
 
     public void endgame(int game) {
+        totalGusses += currentRow-1;
         gamesPlayed++;
         if (game == 1) {
             gamesWon++;
@@ -209,10 +208,12 @@ public class Controller {
         else {
             gameslost++;
         }
+
         // debug
-        System.out.println("Games played: " + gamesPlayed);
-        System.out.println("Games won:    " + gamesWon);
-        System.out.println("Games lost:   " + gameslost);
+        System.out.println("Games played:    " + gamesPlayed);
+        System.out.println("Games won:       " + gamesWon);
+        System.out.println("Games lost:      " + gameslost);
+        System.out.println("Average guesses: " + Math.floor(10.0*totalGusses/gamesPlayed)/10.0);
     }
 
     @FXML protected void reset() {
@@ -225,7 +226,7 @@ public class Controller {
             }
         }
 
-        for (int i = 0; i < 3; i++) {
+        /*for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
                 Button key;
                 String keyLetter = keyboardLetters[i][j];
@@ -243,7 +244,7 @@ public class Controller {
                 if (i == 2 && (j == 0 || j == 8))
                     key.getStyleClass().add("largeKey");
             }
-        }
+        }*/
 
         getWord();
         guessedWords.clear();

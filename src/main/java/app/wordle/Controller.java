@@ -237,7 +237,7 @@ public class Controller {
                 key.getStyleClass().clear();
                 key.getStyleClass().add("key");
 
-                if (j == 0 || j == 8)
+                if (i == 2 && (j == 0 || j == 8))
                     key.getStyleClass().add("largeKey");
             }
         }

@@ -11,6 +11,7 @@
 .root {
     -fx-background-color: #121213;
     -fx-font-family: "Franklin";
+    -fx-font-file: "karnak-normal-400.ttf";
 }
 
 #navbar Label {

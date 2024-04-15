@@ -14,13 +14,13 @@
       <Button onAction="#reset" text="Reset"/>
       <Button onAction="#settings" text="Settings"/>
     </HBox>
-    <Line endX="620" strokeWidth="0.5" stroke="#3a3a3c"/>
+    <Line endX="2000" strokeWidth="0.5" stroke="#3a3a3c"/>
   </VBox>
 
   <VBox>
     <GridPane fx:id="tileGrid" onKeyPressed="#physicalKeyboardInput" alignment="CENTER" hgap="5" vgap="5"/>
     <VBox.margin>
-      <Insets bottom="20.0" top="20.0"/>
+      <Insets bottom="10.0" top="10.0"/>
     </VBox.margin>
   </VBox>
 

@@ -25,6 +25,7 @@ public class Controller {
     private int currentRow = 1, currentColumn = 1;
     private int gamesWon = 0, gameslost = 0, gamesPlayed = 0;
 
+    @FXML public VBox root;
     @FXML public GridPane tileGrid;
     @FXML public GridPane keyboard1, keyboard2, keyboard3;
 
@@ -59,6 +60,9 @@ public class Controller {
     }
 
     public void loadKeyboard() {
+        //focus scene to get physical keyboard input
+        root.setOnMouseClicked(e -> root.requestFocus());
+        
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
                 Button key = new Button();
@@ -82,13 +86,13 @@ public class Controller {
         }
     }
 
-    @FXML protected void physicalKeyboardInput(KeyEvent keyEvent) {
+    public void physicalKeyboardInput(KeyEvent keyEvent) {
         if (keyEvent.getCode().isLetterKey())
-            letterInput(keyEvent.getText());
+            onLetter(keyEvent.getText());
         else if (keyEvent.getCode() == KeyCode.BACK_SPACE)
-            backspace();
+            onDelete();
         else if (keyEvent.getCode() == KeyCode.ENTER)
-            enter();
+            onEnter();
     }
 
     public void virtualKeyboardInput(ActionEvent event) {
@@ -97,16 +101,16 @@ public class Controller {
 
         if (currentRow <= 6)
             if (id.length() == 1)
-                letterInput(id);
+                onLetter(id);
             else if (id.equals("DEL"))
-                backspace();
+                onDelete();
             else if (id.equals("ENTER"))
-                enter();
+                onEnter();
 
         // System.out.println(id); // debug
     }
 
-    public void letterInput(String letter) {
+    public void onLetter(String letter) {
         if (currentColumn <= 5) {
             Label tile = (Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow);
             tile.setText(letter);
@@ -116,15 +120,15 @@ public class Controller {
         }
     }
 
-    public void backspace() {
-        currentColumn--;
+    public void onDelete() {
+        currentColumn = Math.min(currentColumn-1, 1);
         Label tile = (Label) tileGrid.lookup("#" +currentColumn + "-" + currentRow);
         tile.setText("");
         currentWord = currentWord.substring(0, currentColumn-1);
         System.out.println(currentColumn + " " + currentWord); // debug
     }
 
-    public void enter() {
+    public void onEnter() {
         String isValid = checkWord(currentWord);
         if (isValid.equals("valid")) {
             guessedWords.add(currentWord);

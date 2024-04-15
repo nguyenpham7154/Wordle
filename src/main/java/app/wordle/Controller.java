@@ -70,7 +70,6 @@ public class Controller {
                 key.getStyleClass().add("key");
                 key.setText(keyLetter);
                 key.setId(keyLetter);
-                //
                 key.setOnAction(e -> virtualKeyboardInput(e));
 
                 if (i == 0)

@@ -19,7 +19,7 @@ public class Main extends Application {
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
         stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setTitle("wordleFX");
         stage.setScene(scene);
 

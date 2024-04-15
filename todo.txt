@@ -1,0 +1,10 @@
+Main
+welcome introduction rules & menu
+exit/play again button
+dark/light mode switch
+
+Extras
+guess distribution
+streak, max streak
+time, best time
+game mode for different word lengths

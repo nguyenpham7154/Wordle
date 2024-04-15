@@ -4,8 +4,8 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Controller">
-
+<VBox fx:id="root" alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Controller">
+  
   <VBox alignment="TOP_CENTER">
     <HBox fx:id="navbar" alignment="CENTER">
       <Button onAction="#help" text="Help"/>

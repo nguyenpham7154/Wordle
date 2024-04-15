@@ -2,7 +2,7 @@ Main
 > welcome introduction rules & menu
 generate word
 print board letter slots
-> keyboard
+keyboard
 > exit/play again button
 > dark mode
 

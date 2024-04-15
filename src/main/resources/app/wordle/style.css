@@ -1,7 +1,36 @@
+@font-face {
+    -fx-font-family: "Franklin";
+    src: url("franklin-normal-600.ttf");
+}
+
+@font-face {
+    -fx-font-family: "Karnak";
+    src: url("karnak-normal-400.ttf");
+}
+
+.root {
+    -fx-background-color: #121213;
+    -fx-font-family: "Franklin";
+}
+
+#navbar Label {
+    -fx-font-family: "Karnak";
+    -fx-text-fill: white;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 100;
+}
+#navbar Button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
 .tile {
-    -fx-background-color: #d3d6da;
-    -fx-border: 2px, #878a8c;
-    -fx-text-fill: black;
+    -fx-background-color: #121213;
+    -fx-border-color: #3a3a3c;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
     -fx-font-weight: bold;
     -fx-font-size: 26px;
     -fx-min-width: 64px;
@@ -10,23 +39,34 @@
     -fx-alignment: center;
 }
 .key {
-    -fx-background-color: #d3d6da;
-    -fx-border: 2px, #878a8c;
-    -fx-text-fill: black;
-    -fx-font-size: 18px;
+    -fx-background-color: #818384;
+    -fx-text-fill: white;
+    -fx-border-width: 2px;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
     -fx-min-width: 46px;
     -fx-min-height: 62px;
     -fx-text-alignment: center;
     -fx-alignment: center;
     -fx-background-radius: 4px;
+    -fx-focus-color: transparent;
 }
 
-.greenTile{
-    -fx-background-color: #6baa64;
+.largeKey {
+    -fx-font-size: 16px;
+    -fx-min-width: 72px;
+    -fx-min-height: 62px;
 }
-.yellowTile{
-    -fx-background-color: #c8b557;
+
+.green{
+    -fx-background-color: #538d4e;
+    -fx-border-color: #538d4e;
 }
-.grayTile{
-    -fx-background-color: #787c7f;
+.yellow{
+    -fx-background-color: #b59f3b;
+    -fx-border-color: #b59f3b;
+}
+.gray{
+    -fx-background-color: #3a3a3c;
+    -fx-border-color: #3a3a3c;
 }

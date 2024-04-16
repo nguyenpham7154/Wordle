@@ -14,7 +14,7 @@
       <Button onAction="#reset" text="Reset"/>
       <Button onAction="#settings" text="Settings"/>
     </HBox>
-    <Line endX="2000" strokeWidth="0.5" stroke="#3a3a3c"/>
+    <Line endX="2000" strokeWidth="0.5" stroke="#818384"/>
   </VBox>
 
   <VBox>

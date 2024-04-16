@@ -23,7 +23,7 @@ public class Controller {
     private static ArrayList<String> guessedWords = new ArrayList<String>();
 
     private String correctWord;
-    private int rows = 6, columns = 5;
+    private int maxRows = 6, maxColumns = 5;
     private String currentWord = "";
     private int currentRow = 1, currentColumn = 1;
     private int gamesWon = 0, gameslost = 0, gamesPlayed = 0, totalGusses = 0;
@@ -50,8 +50,12 @@ public class Controller {
     }
 
     public void loadTileGrid () {
-        for (int i = 1; i <= rows; i++) {
-            for (int j = 1; j <= columns; j++) {
+        //request focus to get physical keyboard input
+        tileGrid.setOnMouseClicked(e -> tileGrid.requestFocus());
+        tileGrid.setOnKeyPressed(this::physicalKeyboardInput);
+
+        for (int i = 1; i <= maxRows; i++) {
+            for (int j = 1; j <= maxColumns; j++) {
                 Label tile = new Label();
                 tile.setText("");
                 tile.setId(j + "-" + i);
@@ -62,10 +66,6 @@ public class Controller {
     }
 
     public void loadKeyboard() {
-        //focus scene to get physical keyboard input
-        root.requestFocus();
-        root.setOnKeyPressed(this::physicalKeyboardInput);
-        
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
                 Button key = new Button();
@@ -73,7 +73,7 @@ public class Controller {
                 key.getStyleClass().add("key");
                 key.setText(keyLetter);
                 key.setId(keyLetter);
-                key.setOnAction(e -> virtualKeyboardInput(e));
+                key.setOnAction(this::virtualKeyboardInput);
 
                 if (i == 0)
                     keyboard1.add(key, j, i);
@@ -89,12 +89,13 @@ public class Controller {
     }
 
     public void physicalKeyboardInput(KeyEvent keyEvent) {
-        if (currentRow <= 6)
-            if (keyEvent.getCode().isLetterKey())
+        KeyCode keycode = keyEvent.getCode();
+        if (currentRow <= maxRows)
+            if (keycode.isLetterKey())
                 onLetter(keyEvent.getText());
-            else if (keyEvent.getCode() == KeyCode.BACK_SPACE)
+            else if (keycode == KeyCode.BACK_SPACE)
                 onDelete();
-            else if (keyEvent.getCode() == KeyCode.ENTER)
+            else if (keycode == KeyCode.ENTER)
                 onEnter();
     }
 
@@ -102,7 +103,7 @@ public class Controller {
         Button button = (Button) event.getSource();
         String id = button.getId();
 
-        if (currentRow <= 6)
+        if (currentRow <= maxRows)
             if (id.length() == 1)
                 onLetter(id);
             else if (id.equals("DEL"))
@@ -113,33 +114,34 @@ public class Controller {
     }
 
     public void onLetter(String letter) {
-        if (currentColumn <= 5) {
-            ((Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow)).setText(letter);
+        if (currentColumn <= maxColumns) {
+            ((Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow)).setText(letter.toUpperCase());
             currentWord += letter;
             currentColumn++;
-            System.out.println(currentWord); // debug
         }
     }
 
     public void onDelete() {
         currentColumn = Math.max(currentColumn-1, 1);
-        ((Label) tileGrid.lookup("#" +currentColumn + "-" + currentRow)).setText("");
+        Label tile = (Label) tileGrid.lookup("#" +currentColumn + "-" + currentRow);
+        tile.setText("");
         currentWord = currentWord.substring(0, currentColumn-1);
-        System.out.println(currentWord); // debug
     }
 
     public void onEnter() {
         String isValid = checkWord(currentWord);
         if (isValid.equals("valid")) {
+            System.out.println(currentWord); // debug
             guessedWords.add(currentWord);
             setColors(currentWord);
             currentRow++;
             currentColumn = 1;
 
-            if (currentRow > 6)
-                endgame(0);
-            else if (correctWord.equals(currentWord))
+
+            if (correctWord.equals(currentWord))
                 endgame(1);
+            else if (currentRow > maxRows)
+                endgame(0);
 
             currentWord = "";
         } else {
@@ -149,7 +151,7 @@ public class Controller {
 
     public String checkWord(String currentWord) {
         currentWord = currentWord.toLowerCase();
-        if (currentWord.length() != 5)
+        if (currentWord.length() != maxColumns)
             return "Not enough letters";
         else if (!search(dictionary, currentWord))
             return "Not in word list";
@@ -217,10 +219,15 @@ public class Controller {
     }
 
     @FXML protected void reset() {
-        for (int i = 1; i <= rows; i++) {
-            for (int j = 1; j <= columns; j++) {
+        getWord();
+        guessedWords.clear();
+        currentWord = "";
+        currentRow = 1;
+
+        for (int i = 1; i <= maxRows; i++) {
+            for (int j = 1; j <= maxColumns; j++) {
                 Label tile = (Label) tileGrid.lookup("#" + j + "-" + i);
-                tile.setText(" ");
+                tile.setText("");
                 tile.getStyleClass().clear();
                 tile.getStyleClass().add("tile");
             }
@@ -245,12 +252,6 @@ public class Controller {
                     key.getStyleClass().add("largeKey");
             }
         }*/
-
-        getWord();
-        guessedWords.clear();
-        currentWord = "";
-        currentRow = 1;
-        currentColumn = 1;
     }
 
     @FXML protected void help() {

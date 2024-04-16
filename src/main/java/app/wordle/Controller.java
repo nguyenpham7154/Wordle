@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
+// apply 2d array of buttons or hashmap
+// change to 1d array, change enter and del to symbol
 public class Controller {
     private final String[][] keyboardLetters = {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
@@ -51,6 +53,7 @@ public class Controller {
 
     public void loadTileGrid () {
         //request focus to get physical keyboard input
+        tileGrid.requestFocus();
         tileGrid.setOnMouseClicked(e -> tileGrid.requestFocus());
         tileGrid.setOnKeyPressed(this::physicalKeyboardInput);
 
@@ -222,6 +225,7 @@ public class Controller {
         getWord();
         guessedWords.clear();
         currentWord = "";
+        currentColumn = 1;
         currentRow = 1;
 
         for (int i = 1; i <= maxRows; i++) {
@@ -252,6 +256,7 @@ public class Controller {
                     key.getStyleClass().add("largeKey");
             }
         }*/
+        tileGrid.requestFocus();
     }
 
     @FXML protected void help() {

@@ -13,14 +13,53 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // apply 2d array of buttons or hashmap
 // change to 1d array, change enter and del to symbol
 public class Controller {
-    private final String[][] keyboardLetters = {
-            {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
-            {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
-            {"ENTER", "Z", "X", "C", "V", "B", "N", "M", "DEL"}};
+    private HashMap<String, Button> buttonMap;
+
+    private 
+
+    private final String[] keyboardLetters = {
+        "QWERTYUIOP", "ASDFGHJKL", "ENTER", "ZXCVBNM", "DEL"
+    }
+
+    public void loadKeyboard() {
+        for (int i = 0; i < 5; i++) {
+            String keyLetter = keyboardLetters[i];
+            // Adding large keys
+            if (i == 2 || i == 4) {
+                Button key = new Button();
+                key.getStyleClass().add("key");
+                key.getStyleClass().add("largeKey");
+                key.setText(keyLetter);
+                key.setId(keyLetter);
+                key.setOnAction(this::virtualKeyboardInput);
+
+                keyboard3.add(key, j, i);
+            }
+            // adding normal keys
+            else for (int j = 0; j < keyboardLetters[i].length(); j++) {
+                Button key = new Button();
+                keyLetter = String.valueOf(keyboardLetters[i].charAt(j));
+
+                key.getStyleClass().add("key");
+                key.setText(keyLetter);
+                key.setId(keyLetter);
+                key.setOnAction(this::virtualKeyboardInput);
+
+                if (i == 0)
+                    keyboard1.add(key, j, i);
+                else if (i == 1)
+                    keyboard2.add(key, j, i);
+                else 
+                    keyboard3.add(key, j, i);
+            }
+        }
+    }
+
     private static ArrayList<String> dictionary = new ArrayList<String>();
     private static ArrayList<String> guessedWords = new ArrayList<String>();
 

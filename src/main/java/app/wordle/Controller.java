@@ -15,59 +15,22 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// apply 2d array of buttons or hashmap
-// change to 1d array, change enter and del to symbol
 public class Controller {
-    private HashMap<String, Button> buttonMap;
-
-    private 
-
-    private final String[] keyboardLetters = {
-        "QWERTYUIOP", "ASDFGHJKL", "ENTER", "ZXCVBNM", "DEL"
-    }
-
-    public void loadKeyboard() {
-        for (int i = 0; i < 5; i++) {
-            String keyLetter = keyboardLetters[i];
-            // Adding large keys
-            if (i == 2 || i == 4) {
-                Button key = new Button();
-                key.getStyleClass().add("key");
-                key.getStyleClass().add("largeKey");
-                key.setText(keyLetter);
-                key.setId(keyLetter);
-                key.setOnAction(this::virtualKeyboardInput);
-
-                keyboard3.add(key, j, i);
-            }
-            // adding normal keys
-            else for (int j = 0; j < keyboardLetters[i].length(); j++) {
-                Button key = new Button();
-                keyLetter = String.valueOf(keyboardLetters[i].charAt(j));
-
-                key.getStyleClass().add("key");
-                key.setText(keyLetter);
-                key.setId(keyLetter);
-                key.setOnAction(this::virtualKeyboardInput);
-
-                if (i == 0)
-                    keyboard1.add(key, j, i);
-                else if (i == 1)
-                    keyboard2.add(key, j, i);
-                else 
-                    keyboard3.add(key, j, i);
-            }
-        }
-    }
+    private final String[][] keyboardLetters = {
+            {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
+            {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
+            {"ENTER", "Z", "X", "C", "V", "B", "N", "M", "DEL"}};
+    private static HashMap<String, Button> keyHashMap = new HashMap<String, Button>();
 
     private static ArrayList<String> dictionary = new ArrayList<String>();
     private static ArrayList<String> guessedWords = new ArrayList<String>();
 
     private String correctWord;
-    private int maxRows = 6, maxColumns = 5;
     private String currentWord = "";
+    private int maxRows = 6, maxColumns = 5;
     private int currentRow = 1, currentColumn = 1;
     private int gamesWon = 0, gameslost = 0, gamesPlayed = 0, totalGusses = 0;
+    private Boolean disabled = false;
 
     @FXML private VBox root;
     @FXML private GridPane tileGrid;
@@ -86,7 +49,7 @@ public class Controller {
     }
 
     public void getWord() {
-        correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1)));
+        correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
         System.out.println("correctWord = " + correctWord); // debug
     }
 
@@ -112,29 +75,32 @@ public class Controller {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
                 Button key = new Button();
                 String keyLetter = keyboardLetters[i][j];
+
                 key.getStyleClass().add("key");
                 key.setText(keyLetter);
                 key.setId(keyLetter);
                 key.setOnAction(this::virtualKeyboardInput);
+                keyHashMap.put(keyLetter, key);
 
                 if (i == 0)
-                    keyboard1.add(key, j, i);
+                    keyboard1.add(key, j, 0);
                 else if (i == 1)
-                    keyboard2.add(key, j, i);
+                    keyboard2.add(key, j, 1);
                 else {
                     if (j == 0 || j == 8)
                         key.getStyleClass().add("largeKey");
-                    keyboard3.add(key, j, 0);
+                    keyboard3.add(key, j, 2);
                 }
+
             }
         }
     }
 
     public void physicalKeyboardInput(KeyEvent keyEvent) {
         KeyCode keycode = keyEvent.getCode();
-        if (currentRow <= maxRows)
+        if (!disabled)
             if (keycode.isLetterKey())
-                onLetter(keyEvent.getText());
+                onLetter(keyEvent.getText().toUpperCase());
             else if (keycode == KeyCode.BACK_SPACE)
                 onDelete();
             else if (keycode == KeyCode.ENTER)
@@ -145,7 +111,7 @@ public class Controller {
         Button button = (Button) event.getSource();
         String id = button.getId();
 
-        if (currentRow <= maxRows)
+        if (!disabled)
             if (id.length() == 1)
                 onLetter(id);
             else if (id.equals("DEL"))
@@ -157,7 +123,7 @@ public class Controller {
 
     public void onLetter(String letter) {
         if (currentColumn <= maxColumns) {
-            ((Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow)).setText(letter.toUpperCase());
+            ((Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow)).setText(letter);
             currentWord += letter;
             currentColumn++;
         }
@@ -173,12 +139,10 @@ public class Controller {
     public void onEnter() {
         String isValid = checkWord(currentWord);
         if (isValid.equals("valid")) {
-            System.out.println(currentWord); // debug
             guessedWords.add(currentWord);
             setColors(currentWord);
             currentRow++;
             currentColumn = 1;
-
 
             if (correctWord.equals(currentWord))
                 endgame(1);
@@ -221,43 +185,46 @@ public class Controller {
 
     public void setColors(String currentWord) {
         for (int i = 0; i < 5; i++) {
-            String letter = String.valueOf(currentWord.toLowerCase().charAt(i));
+            String letter = String.valueOf(currentWord.charAt(i));
             Label tile = (Label) tileGrid.lookup("#" + (i+1) + "-" + currentRow);
+            Button key = keyHashMap.get(letter);
 
-            /*
-            Label key;
-            if (keyboardLetters[0])
-                key = (Label) keyboard1.lookup("#" + letter);
-            else if (keyboardLetters[1])
-                key = (Label) keyboard2.lookup("#" + letter);
-            else if (keyboardLetters[2])
-                key = (Label) keyboard3.lookup("#" + letter);
-            */
-
-            if (correctWord.charAt(i) == letter.charAt(0))
-                tile.getStyleClass().add("green");
-            else if (correctWord.contains(letter))
-                tile.getStyleClass().add("yellow");
-            else
-                tile.getStyleClass().add("gray");
+            if (correctWord.charAt(i) == letter.charAt(0)) {
+                tile.getStyleClass().add("greenTile");
+                key.getStyleClass().add("greenKey");
+            }
+            else if (correctWord.contains(letter)) {
+                tile.getStyleClass().add("yellowTile");
+                key.getStyleClass().add("yellowKey");
+            } else {
+                tile.getStyleClass().add("grayTile");
+                key.getStyleClass().add("grayKey");
+            }
         }
     }
 
     public void endgame(int game) {
-        totalGusses += currentRow-1;
         gamesPlayed++;
         if (game == 1) {
+            totalGusses += currentRow-1;
             gamesWon++;
         }
         else {
             gameslost++;
         }
 
+        disabled = true;
+        double averageGuesses = (gamesWon == 0)? 0 : Math.floor(10.0*totalGusses/gamesWon)/10.0;
         // debug
-        System.out.println("Games played:    " + gamesPlayed);
-        System.out.println("Games won:       " + gamesWon);
-        System.out.println("Games lost:      " + gameslost);
-        System.out.println("Average guesses: " + Math.floor(10.0*totalGusses/gamesPlayed)/10.0);
+        System.out.println("Games played:     " + gamesPlayed);
+        System.out.println("Games won:        " + gamesWon);
+        System.out.println("Games lost:       " + gameslost);
+        System.out.println("Average guesses:  " + averageGuesses + "\n");
+    }
+
+    @FXML protected void help() {
+    }
+    @FXML protected void scoreboard() {
     }
 
     @FXML protected void reset() {
@@ -276,32 +243,22 @@ public class Controller {
             }
         }
 
-        /*for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
-                Button key;
                 String keyLetter = keyboardLetters[i][j];
-
-                if (i == 0)
-                    key = (Button) keyboard1.lookup("#" +keyLetter);
-                else if (i == 1)
-                    key = (Button) keyboard2.lookup("#" +keyLetter);
-                else
-                    key = (Button) keyboard3.lookup("#" +keyLetter);
+                Button key = keyHashMap.get(keyLetter);
 
                 key.getStyleClass().clear();
                 key.getStyleClass().add("key");
-
                 if (i == 2 && (j == 0 || j == 8))
                     key.getStyleClass().add("largeKey");
             }
-        }*/
+        }
+
+        disabled = false;
         tileGrid.requestFocus();
     }
 
-    @FXML protected void help() {
-    }
-    @FXML protected void scoreboard() {
-    }
     @FXML protected void settings() {
     }
 }

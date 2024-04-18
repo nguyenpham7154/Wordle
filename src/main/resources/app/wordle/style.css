@@ -39,10 +39,10 @@
     -fx-text-alignment: center;
     -fx-alignment: center;
 }
+
 .key {
     -fx-background-color: #818384;
     -fx-text-fill: white;
-    -fx-border-width: 2px;
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-min-width: 46px;
@@ -59,15 +59,26 @@
     -fx-min-height: 62px;
 }
 
-.green{
+.greenTile {
     -fx-background-color: #538d4e;
     -fx-border-color: #538d4e;
 }
-.yellow{
+.greenKey {
+    -fx-background-color: #538d4e;
+}
+
+.yellowTile {
     -fx-background-color: #b59f3b;
     -fx-border-color: #b59f3b;
 }
-.gray{
+.yellowKey {
+    -fx-background-color: #b59f3b;
+}
+
+.grayTile{
     -fx-background-color: #3a3a3c;
     -fx-border-color: #3a3a3c;
+}
+.grayKey{
+    -fx-background-color: #3a3a3c;
 }

@@ -24,7 +24,7 @@
     </VBox.margin>
   </VBox>
 
-  <VBox>
+  <VBox alignment="BOTTOM_CENTER">
     <GridPane fx:id="keyboard1" alignment="CENTER" hgap="6.5"/>
     <GridPane fx:id="keyboard2" alignment="CENTER" hgap="6.5" style="-fx-padding: 6.5 0"/>
     <GridPane fx:id="keyboard3" alignment="CENTER" hgap="6.5"/>

@@ -26,10 +26,11 @@ public class Controller {
     private static ArrayList<String> guessedWords = new ArrayList<String>();
 
     private String correctWord;
+    private String foundLetters;
     private String currentWord = "";
     private int maxRows = 6, maxColumns = 5;
     private int currentRow = 1, currentColumn = 1;
-    private int gamesWon = 0, gameslost = 0, gamesPlayed = 0, totalGusses = 0;
+    private int gamesWon = 0, gamesLost = 0, gamesPlayed = 0, totalGusses = 0, streak = 0;
     private Boolean disabled = false;
 
     @FXML private VBox root;
@@ -50,6 +51,7 @@ public class Controller {
 
     public void getWord() {
         correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
+        // correctWord = "APPLE";
         System.out.println("correctWord = " + correctWord); // debug
     }
 
@@ -137,10 +139,10 @@ public class Controller {
     }
 
     public void onEnter() {
-        String isValid = checkWord(currentWord);
+        String isValid = checkWord();
         if (isValid.equals("valid")) {
             guessedWords.add(currentWord);
-            setColors(currentWord);
+            setColors();
             currentRow++;
             currentColumn = 1;
 
@@ -155,11 +157,10 @@ public class Controller {
         }
     }
 
-    public String checkWord(String currentWord) {
-        currentWord = currentWord.toLowerCase();
+    public String checkWord() {
         if (currentWord.length() != maxColumns)
             return "Not enough letters";
-        else if (!search(dictionary, currentWord))
+        else if (!search(dictionary, currentWord.toLowerCase()))
             return "Not in word list";
         else if (guessedWords.contains(currentWord))
             return "Word already tried";
@@ -183,19 +184,27 @@ public class Controller {
         return false;
     }
 
-    public void setColors(String currentWord) {
+    public void setColors() {
+        foundLetters = correctWord;
+        for (int i = 0; i < 5; i++) {
+            char letter = currentWord.charAt(i);
+            if (correctWord.charAt(i) == currentWord.charAt(i)) {
+                foundLetters = foundLetters.replace(letter, '_');
+            }
+        }
+
         for (int i = 0; i < 5; i++) {
             String letter = String.valueOf(currentWord.charAt(i));
             Label tile = (Label) tileGrid.lookup("#" + (i+1) + "-" + currentRow);
             Button key = keyHashMap.get(letter);
 
-            if (correctWord.charAt(i) == letter.charAt(0)) {
-                tile.getStyleClass().add("greenTile");
-                key.getStyleClass().add("greenKey");
-            }
-            else if (correctWord.contains(letter)) {
+            if (correctWord.contains(letter) && foundLetters.charAt(i) != '_') {
                 tile.getStyleClass().add("yellowTile");
                 key.getStyleClass().add("yellowKey");
+            }
+            else if (correctWord.charAt(i) == letter.charAt(0)) {
+                tile.getStyleClass().add("greenTile");
+                key.getStyleClass().add("greenKey");
             } else {
                 tile.getStyleClass().add("grayTile");
                 key.getStyleClass().add("grayKey");
@@ -208,23 +217,29 @@ public class Controller {
         if (game == 1) {
             totalGusses += currentRow-1;
             gamesWon++;
+            streak ++;
         }
         else {
-            gameslost++;
+            gamesLost++;
+            streak = 0;
         }
 
         disabled = true;
         double averageGuesses = (gamesWon == 0)? 0 : Math.floor(10.0*totalGusses/gamesWon)/10.0;
         // debug
+        System.out.println("\n--- Scoreboard ---");
         System.out.println("Games played:     " + gamesPlayed);
         System.out.println("Games won:        " + gamesWon);
-        System.out.println("Games lost:       " + gameslost);
+        System.out.println("Games lost:       " + gamesLost);;
+        System.out.println("Streak:           " + streak);
         System.out.println("Average guesses:  " + averageGuesses + "\n");
     }
 
     @FXML protected void help() {
+        Tutorial.display();
     }
     @FXML protected void scoreboard() {
+        Scoreboard.display();
     }
 
     @FXML protected void reset() {

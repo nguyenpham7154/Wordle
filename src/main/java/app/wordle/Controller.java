@@ -1,19 +1,29 @@
 package app.wordle;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.collections.ObservableList;
+import javafx.css.StyleClass;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javafx.util.Duration;
 
 public class Controller {
     private final String[][] keyboardLetters = {
@@ -26,7 +36,7 @@ public class Controller {
     private static ArrayList<String> guessedWords = new ArrayList<String>();
 
     private String correctWord;
-    private String foundLetters;
+    private String foundLetters; // fix
     private String currentWord = "";
     private int maxRows = 6, maxColumns = 5;
     private int currentRow = 1, currentColumn = 1;
@@ -34,10 +44,11 @@ public class Controller {
     private Boolean disabled = false;
 
     @FXML private VBox root;
+    @FXML private VBox notificationStack;
     @FXML private GridPane tileGrid;
     @FXML private GridPane keyboard1, keyboard2, keyboard3;
 
-
+    // loads txt file into string array
     public void loadDictonary() {
         try {
             Scanner scanner = new Scanner(new File("src/main/resources/app/wordle/dictionary.txt"));
@@ -49,6 +60,7 @@ public class Controller {
         }
     }
 
+    // selects random word from dictionary as correctWord
     public void getWord() {
         correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
         // correctWord = "APPLE";
@@ -89,7 +101,7 @@ public class Controller {
                 else if (i == 1)
                     keyboard2.add(key, j, 1);
                 else {
-                    if (j == 0 || j == 8)
+                    if (j == 0 || j == 8) // enter and del keys
                         key.getStyleClass().add("largeKey");
                     keyboard3.add(key, j, 2);
                 }
@@ -132,43 +144,64 @@ public class Controller {
     }
 
     public void onDelete() {
+        // decrements currentColumn but keeps it above 1
         currentColumn = Math.max(currentColumn-1, 1);
         Label tile = (Label) tileGrid.lookup("#" +currentColumn + "-" + currentRow);
         tile.setText("");
+        // currentWord reassigned excluding deleted character
         currentWord = currentWord.substring(0, currentColumn-1);
     }
 
     public void onEnter() {
-        String isValid = checkWord();
-        if (isValid.equals("valid")) {
+        // if word is not valid, runs notification with message
+        if (currentWord.length() != maxColumns)
+            notification("Not enough letters");
+        else if (!search(dictionary, currentWord.toLowerCase()))
+            notification("Not in word list");
+        else if (guessedWords.contains(currentWord))
+            notification("Word already tried");
+
+        // else processes the input
+        else {
             guessedWords.add(currentWord);
             setColors();
             currentRow++;
             currentColumn = 1;
 
+            // ends game if either input is correct or no more guesses left
             if (correctWord.equals(currentWord))
                 endgame(1);
             else if (currentRow > maxRows)
                 endgame(0);
 
             currentWord = "";
-        } else {
-            System.out.println(isValid);
         }
     }
 
-    public String checkWord() {
-        if (currentWord.length() != maxColumns)
-            return "Not enough letters";
-        else if (!search(dictionary, currentWord.toLowerCase()))
-            return "Not in word list";
-        else if (guessedWords.contains(currentWord))
-            return "Word already tried";
-        else
-            return "valid";
+    private int n = 0;
+
+    public void notification(String message) {
+        if (n < 8) {
+            Label popup = new Label(message);
+            popup.getStyleClass().add("popup");
+            notificationStack.getChildren().add(0, popup); n++;
+            FadeTransition fade = new FadeTransition(Duration.millis(500), popup);
+            fade.setFromValue(1.0);
+            fade.setToValue(0.0);
+
+            Timeline timeline = new Timeline(
+                new KeyFrame(Duration.millis(1500), event -> {
+                    fade.play();
+                }),
+                new KeyFrame(Duration.millis(2000), event -> {
+                    notificationStack.getChildren().remove(popup); n--;
+                })
+            );
+            timeline.play();
+        }
     }
 
-    // Binary search
+    // binary search algorithm
     private boolean search(ArrayList<String> list, String target) {
         int low = 0, high = list.size() - 1;
         while (low <= high) {
@@ -197,17 +230,21 @@ public class Controller {
             String letter = String.valueOf(currentWord.charAt(i));
             Label tile = (Label) tileGrid.lookup("#" + (i+1) + "-" + currentRow);
             Button key = keyHashMap.get(letter);
+            ObservableList<String> keystyle = key.getStyleClass();
 
-            if (correctWord.contains(letter) && foundLetters.charAt(i) != '_') {
-                tile.getStyleClass().add("yellowTile");
-                key.getStyleClass().add("yellowKey");
-            }
-            else if (correctWord.charAt(i) == letter.charAt(0)) {
+            if (correctWord.charAt(i) == letter.charAt(0)) {
                 tile.getStyleClass().add("greenTile");
-                key.getStyleClass().add("greenKey");
+                keystyle.clear();
+                keystyle.add("key");
+                keystyle.add("greenKey");
+            }
+            else if (correctWord.contains(letter)) {
+                tile.getStyleClass().add("yellowTile");
+                if (foundLetters.charAt(i) != '_')
+                    keystyle.add("yellowKey");
             } else {
                 tile.getStyleClass().add("grayTile");
-                key.getStyleClass().add("grayKey");
+                keystyle.add("grayKey");
             }
         }
     }
@@ -218,28 +255,26 @@ public class Controller {
             totalGusses += currentRow-1;
             gamesWon++;
             streak ++;
-        }
-        else {
+        } else {
             gamesLost++;
             streak = 0;
         }
-
         disabled = true;
+    }
+
+    @FXML protected void help() {
+        Tutorial.display();
+    }
+    @FXML protected void scoreboard() throws IOException {
+        Scoreboard.display();
+
         double averageGuesses = (gamesWon == 0)? 0 : Math.floor(10.0*totalGusses/gamesWon)/10.0;
-        // debug
         System.out.println("\n--- Scoreboard ---");
         System.out.println("Games played:     " + gamesPlayed);
         System.out.println("Games won:        " + gamesWon);
         System.out.println("Games lost:       " + gamesLost);;
         System.out.println("Streak:           " + streak);
         System.out.println("Average guesses:  " + averageGuesses + "\n");
-    }
-
-    @FXML protected void help() {
-        Tutorial.display();
-    }
-    @FXML protected void scoreboard() {
-        Scoreboard.display();
     }
 
     @FXML protected void reset() {

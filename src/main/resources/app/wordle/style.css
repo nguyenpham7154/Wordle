@@ -27,6 +27,16 @@
     -fx-padding: 0 10;
 }
 
+.popup {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-padding: 10 10;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-background-radius: 2px;
+}
+
 .tile {
     -fx-background-color: #121213;
     -fx-border-color: #3a3a3c;

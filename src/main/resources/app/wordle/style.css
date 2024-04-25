@@ -69,11 +69,11 @@
     -fx-min-height: 62px;
 }
 
-.greenTile {
+.greenTile.label {
     -fx-background-color: #538d4e;
     -fx-border-color: #538d4e;
 }
-.greenKey {
+.greenKey.button {
     -fx-background-color: #538d4e;
 }
 

@@ -36,7 +36,6 @@ public class Controller {
     private static ArrayList<String> guessedWords = new ArrayList<String>();
 
     private String correctWord;
-    private String foundLetters; // fix
     private String currentWord = "";
     private int maxRows = 6, maxColumns = 5;
     private int currentRow = 1, currentColumn = 1;
@@ -62,8 +61,8 @@ public class Controller {
 
     // selects random word from dictionary as correctWord
     public void getWord() {
-        correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
-        // correctWord = "APPLE";
+        //correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
+        correctWord = "APPLE";
         System.out.println("correctWord = " + correctWord); // debug
     }
 
@@ -112,26 +111,28 @@ public class Controller {
 
     public void physicalKeyboardInput(KeyEvent keyEvent) {
         KeyCode keycode = keyEvent.getCode();
-        if (!disabled)
+        if (!disabled) {
             if (keycode.isLetterKey())
                 onLetter(keyEvent.getText().toUpperCase());
             else if (keycode == KeyCode.BACK_SPACE)
                 onDelete();
             else if (keycode == KeyCode.ENTER)
                 onEnter();
+        }
     }
 
     public void virtualKeyboardInput(ActionEvent event) {
         Button button = (Button) event.getSource();
         String id = button.getId();
 
-        if (!disabled)
+        if (!disabled) {
             if (id.length() == 1)
                 onLetter(id);
             else if (id.equals("DEL"))
                 onDelete();
             else if (id.equals("ENTER"))
                 onEnter();
+        }
 
     }
 
@@ -156,8 +157,8 @@ public class Controller {
         // if word is not valid, runs notification with message
         if (currentWord.length() != maxColumns)
             notification("Not enough letters");
-        else if (!search(dictionary, currentWord.toLowerCase()))
-            notification("Not in word list");
+        /*else if (!search(dictionary, currentWord.toLowerCase()))
+            notification("Not in word list");*/
         else if (guessedWords.contains(currentWord))
             notification("Word already tried");
 
@@ -181,18 +182,23 @@ public class Controller {
     private int n = 0;
 
     public void notification(String message) {
+        // limits number of labels to prevent overflow
         if (n < 8) {
             Label popup = new Label(message);
             popup.getStyleClass().add("popup");
+            // adds labels to top of vbox
             notificationStack.getChildren().add(0, popup); n++;
+            // fades completely in 0.5s
             FadeTransition fade = new FadeTransition(Duration.millis(500), popup);
             fade.setFromValue(1.0);
             fade.setToValue(0.0);
 
             Timeline timeline = new Timeline(
+                // starts fading at 1.5s
                 new KeyFrame(Duration.millis(1500), event -> {
                     fade.play();
                 }),
+                // label fades completely and gets removed at 2s
                 new KeyFrame(Duration.millis(2000), event -> {
                     notificationStack.getChildren().remove(popup); n--;
                 })
@@ -217,13 +223,17 @@ public class Controller {
         return false;
     }
 
-    public void setColors() {
-        foundLetters = correctWord;
+   public void setColors() {
+        String word = "";
         for (int i = 0; i < 5; i++) {
             char letter = currentWord.charAt(i);
-            if (correctWord.charAt(i) == currentWord.charAt(i)) {
-                foundLetters = foundLetters.replace(letter, '_');
+            if (correctWord.charAt(i) == letter) {
+                word += '*';
+                if (word.contains(String.valueOf(letter)))
+                    word = word.replaceFirst(String.valueOf(letter), "_");
             }
+            else
+                word += letter;
         }
 
         for (int i = 0; i < 5; i++) {
@@ -232,17 +242,15 @@ public class Controller {
             Button key = keyHashMap.get(letter);
             ObservableList<String> keystyle = key.getStyleClass();
 
-            if (correctWord.charAt(i) == letter.charAt(0)) {
+            if (word.charAt(i) == '*') {
                 tile.getStyleClass().add("greenTile");
-                keystyle.clear();
-                keystyle.add("key");
                 keystyle.add("greenKey");
             }
-            else if (correctWord.contains(letter)) {
+            else if (word.charAt(i) != '_') {
                 tile.getStyleClass().add("yellowTile");
-                if (foundLetters.charAt(i) != '_')
-                    keystyle.add("yellowKey");
-            } else {
+                keystyle.add("yellowKey");
+            }
+            else {
                 tile.getStyleClass().add("grayTile");
                 keystyle.add("grayKey");
             }
@@ -258,6 +266,7 @@ public class Controller {
         } else {
             gamesLost++;
             streak = 0;
+            notification(correctWord);
         }
         disabled = true;
     }
@@ -307,6 +316,7 @@ public class Controller {
 
         disabled = false;
         tileGrid.requestFocus();
+        tileGrid.setOnMouseClicked(e -> tileGrid.requestFocus());
     }
 
     @FXML protected void settings() {

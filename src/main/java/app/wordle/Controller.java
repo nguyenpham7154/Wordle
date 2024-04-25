@@ -37,11 +37,12 @@ public class Controller {
 
     private String correctWord;
     private String currentWord = "";
-    private int maxRows = 6, maxColumns = 5;
-    private int currentRow = 1, currentColumn = 1;
-    private int gamesWon = 0, gamesLost = 0, gamesPlayed = 0, totalGusses = 0, streak = 0;
-    private Boolean disabled = false;
+    private int maxRows = 6, maxColumns = 5; // presets for max word length and guesses (for later feature)
+    private int currentRow = 1, currentColumn = 1; // keeps track of which column and row currently on
+    private int gamesWon = 0, gamesLost = 0, gamesPlayed = 0, totalGusses = 0, streak = 0; // user game stats
+    private Boolean disabled = false; // input methods doesn't run when true
 
+    // references fxml controller class members and handler methods
     @FXML private VBox root;
     @FXML private VBox notificationStack;
     @FXML private GridPane tileGrid;
@@ -61,17 +62,17 @@ public class Controller {
 
     // selects random word from dictionary as correctWord
     public void getWord() {
-        //correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
-        correctWord = "APPLE";
+        correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
         System.out.println("correctWord = " + correctWord); // debug
     }
 
     public void loadTileGrid () {
-        //request focus to get physical keyboard input
+        //request focus to get physical keyboard input for word grid
         tileGrid.requestFocus();
         tileGrid.setOnMouseClicked(e -> tileGrid.requestFocus());
         tileGrid.setOnKeyPressed(this::physicalKeyboardInput);
 
+        // creates tiles (labels) to add to word grid
         for (int i = 1; i <= maxRows; i++) {
             for (int j = 1; j <= maxColumns; j++) {
                 Label tile = new Label();
@@ -122,9 +123,11 @@ public class Controller {
     }
 
     public void virtualKeyboardInput(ActionEvent event) {
+        // finds id of key pressed
         Button button = (Button) event.getSource();
         String id = button.getId();
 
+        //
         if (!disabled) {
             if (id.length() == 1)
                 onLetter(id);
@@ -137,7 +140,9 @@ public class Controller {
     }
 
     public void onLetter(String letter) {
+        // does not run if row is already filled
         if (currentColumn <= maxColumns) {
+            // updates tile text, increments column tracker
             ((Label) tileGrid.lookup("#" + currentColumn + "-" + currentRow)).setText(letter);
             currentWord += letter;
             currentColumn++;
@@ -157,8 +162,8 @@ public class Controller {
         // if word is not valid, runs notification with message
         if (currentWord.length() != maxColumns)
             notification("Not enough letters");
-        /*else if (!search(dictionary, currentWord.toLowerCase()))
-            notification("Not in word list");*/
+        else if (!search(dictionary, currentWord.toLowerCase()))
+            notification("Not in word list");
         else if (guessedWords.contains(currentWord))
             notification("Word already tried");
 
@@ -194,7 +199,7 @@ public class Controller {
             fade.setToValue(0.0);
 
             Timeline timeline = new Timeline(
-                // starts fading at 1.5s
+                // starts fading at 1.5s for 0.5s
                 new KeyFrame(Duration.millis(1500), event -> {
                     fade.play();
                 }),
@@ -223,32 +228,34 @@ public class Controller {
         return false;
     }
 
-   public void setColors() {
-        String word = "";
+    public void setColors() {
+        String correctword = ""; // temp variable
+        // marks letters in correct positions in the correct word
         for (int i = 0; i < 5; i++) {
-            char letter = currentWord.charAt(i);
-            if (correctWord.charAt(i) == letter) {
-                word += '*';
-                if (word.contains(String.valueOf(letter)))
-                    word = word.replaceFirst(String.valueOf(letter), "_");
-            }
+            if (currentWord.charAt(i) == correctWord.charAt(i))
+                correctword += 'g';
             else
-                word += letter;
+                correctword += correctWord.charAt(i);
         }
 
         for (int i = 0; i < 5; i++) {
+            // loops through each letter of the user-inputted word
             String letter = String.valueOf(currentWord.charAt(i));
             Label tile = (Label) tileGrid.lookup("#" + (i+1) + "-" + currentRow);
             Button key = keyHashMap.get(letter);
             ObservableList<String> keystyle = key.getStyleClass();
 
-            if (word.charAt(i) == '*') {
+            if (correctword.charAt(i) == 'g') {
                 tile.getStyleClass().add("greenTile");
                 keystyle.add("greenKey");
             }
-            else if (word.charAt(i) != '_') {
+            else if (correctword.contains(letter)) {
                 tile.getStyleClass().add("yellowTile");
                 keystyle.add("yellowKey");
+                // eliminates 1 occurance of the out-of-position letter in the correct word
+                // result decreases the number of times that letter can occur to ensure the correct number of yellows
+                // ex. "APPLE" has 2 'P's, so there can only be 2 yellow or green tiles of P in the inputted word
+                correctword.replaceFirst(letter, "y");
             }
             else {
                 tile.getStyleClass().add("grayTile");
@@ -258,6 +265,7 @@ public class Controller {
     }
 
     public void endgame(int game) {
+        // updates user ingame statistics
         gamesPlayed++;
         if (game == 1) {
             totalGusses += currentRow-1;
@@ -266,6 +274,7 @@ public class Controller {
         } else {
             gamesLost++;
             streak = 0;
+            // notifies user of correct word
             notification(correctWord);
         }
         disabled = true;
@@ -287,12 +296,14 @@ public class Controller {
     }
 
     @FXML protected void reset() {
+        // generates new random correct word, clears and resets all tracking varibles
         getWord();
         guessedWords.clear();
         currentWord = "";
         currentColumn = 1;
         currentRow = 1;
 
+        // clears text and styling of all tiles
         for (int i = 1; i <= maxRows; i++) {
             for (int j = 1; j <= maxColumns; j++) {
                 Label tile = (Label) tileGrid.lookup("#" + j + "-" + i);
@@ -302,6 +313,7 @@ public class Controller {
             }
         }
 
+        // clears all styling of keys
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
                 String keyLetter = keyboardLetters[i][j];

@@ -28,7 +28,9 @@ public class Main extends Application {
         controller.loadKeyboard();
         controller.loadTileGrid();
         controller.getWord();
+
         stage.show();
+        controller.tutorial.display();
     }
 
     public static void main(String[] args) {

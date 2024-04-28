@@ -4,10 +4,10 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 
-<VBox fx:id="root" alignment="TOP_CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Controller">
-  
-  <VBox alignment="CENTER">
-    <HBox fx:id="navbar" alignment="CENTER">
+<VBox fx:id="root" spacing="40.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Controller">
+  <VBox>
+    <HBox fx:id="navbar">
+      <styleClass/>
       <Button onAction="#help" text="Help"/>
       <Button onAction="#scoreboard" text="Scoreboard"/>
       <Label text="Wordle"/>
@@ -15,28 +15,18 @@
       <Button onAction="#settings" text="Settings"/>
     </HBox>
     <Line endX="2000" strokeWidth="0.5" stroke="#818384"/>
-    <padding>
-      <Insets top="20.0"/>
-    </padding>
   </VBox>
 
-  <VBox alignment="CENTER">
+  <VBox>
     <StackPane>
-      <GridPane fx:id="tileGrid" alignment="CENTER" onKeyPressed="#physicalKeyboardInput" hgap="5" vgap="5"/>
-      <VBox fx:id="notificationStack" alignment="TOP_CENTER" spacing="15"/>
+      <GridPane fx:id="tileGrid" onKeyPressed="#physicalKeyboardInput" hgap="5" vgap="5"/>
+      <VBox fx:id="notificationStack" spacing="15"/>
     </StackPane>
-    <padding>
-      <Insets bottom="20.0" top="20.0"/>
-    </padding>
   </VBox>
 
-  <VBox alignment="CENTER">
-    <GridPane fx:id="keyboard1" alignment="CENTER" hgap="6.5"/>
-    <GridPane fx:id="keyboard2" alignment="CENTER" hgap="6.5" style="-fx-padding: 6.5 0"/>
-    <GridPane fx:id="keyboard3" alignment="CENTER" hgap="6.5"/>
-    <padding>
-      <Insets bottom="20.0"/>
-    </padding>
+  <VBox>
+    <GridPane fx:id="keyboard1" hgap="6.5"/>
+    <GridPane fx:id="keyboard2" hgap="6.5" style="-fx-padding: 6.5 0"/>
+    <GridPane fx:id="keyboard3" hgap="6.5"/>
   </VBox>
-
 </VBox>

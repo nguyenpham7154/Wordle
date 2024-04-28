@@ -1,30 +1,44 @@
 @font-face {
     -fx-font-family: "Franklin";
-    src: url("franklin-normal-600.ttf");
+    src: url("franklin-normal-700.ttf");
 }
 
 @font-face {
     -fx-font-family: "Karnak";
-    src: url("karnak-normal-400.ttf");
+    src: url("karnakcondensed-normal-700.ttf");
 }
 
+/* Global */
 .root {
     -fx-background-color: #121213;
-    -fx-font-family: "Franklin";
+    -fx-text-fill: white;
+    -fx-font-family: "FrankLin";
+    -fx-font-weight: bold;
+    -fx-padding: 20px;
+    -fx-alignment: top_center;
 }
 
-#navbar Label {
-    -fx-font-family: "Franklin";
+VBox, HBox, GridPane {
+    -fx-alignment: center;
+}
+
+/* navbar */
+#navbar .label {
+    -fx-font-family: "Karnak";
     -fx-text-fill: white;
     -fx-font-size: 42px;
     -fx-font-weight: bold;
     -fx-padding: 0 80;
 }
-#navbar Button {
+#navbar .button {
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-size: 12px;
     -fx-padding: 0 10;
+}
+
+#notificationStack .button{
+    -fx-alignment: top_center;
 }
 
 .popup {
@@ -37,6 +51,7 @@
     -fx-background-radius: 2px;
 }
 
+/* tile and key */
 .tile {
     -fx-background-color: #121213;
     -fx-border-color: #3a3a3c;
@@ -69,7 +84,8 @@
     -fx-min-height: 62px;
 }
 
-.greenTile.label {
+/* color */
+.greenTile {
     -fx-background-color: #538d4e;
     -fx-border-color: #538d4e;
 }
@@ -91,4 +107,8 @@
 }
 .grayKey{
     -fx-background-color: #3a3a3c;
+}
+
+/* scoreboard */
+.scoreboard {
 }

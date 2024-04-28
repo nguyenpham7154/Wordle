@@ -1,5 +1,7 @@
 package app.wordle;
 
 public class Settings {
-    // under construction
+    public static void display() {
+
+    }
 }

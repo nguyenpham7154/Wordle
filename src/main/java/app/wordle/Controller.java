@@ -3,7 +3,6 @@ package app.wordle;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
-import javafx.collections.ObservableList;
 import javafx.css.StyleClass;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -14,7 +13,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -30,6 +28,7 @@ public class Controller {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
             {"ENTER", "Z", "X", "C", "V", "B", "N", "M", "DEL"}};
+    // hashmap to reference keyboard buttons quickly
     private static HashMap<String, Button> keyHashMap = new HashMap<String, Button>();
 
     private static ArrayList<String> dictionary = new ArrayList<String>();
@@ -37,16 +36,24 @@ public class Controller {
 
     private String correctWord;
     private String currentWord = "";
-    private int maxRows = 6, maxColumns = 5; // presets for max word length and guesses (for later feature)
-    private int currentRow = 1, currentColumn = 1; // keeps track of which column and row currently on
-    private int gamesWon = 0, gamesLost = 0, gamesPlayed = 0, totalGusses = 0, streak = 0; // user game stats
-    private Boolean disabled = false; // input methods doesn't run when true
+    // presets for max word length and guesses (for later feature)
+    private int maxRows = 6, maxColumns = 5;
+    // keeps track of which column and row currently on, used to identify corresponding tiles on gridpane
+    private int currentRow = 1, currentColumn = 1;
+    // input functions doesn't run when true
+    private Boolean disabled = false;
+    // user game statistics
+    public int gamesWon = 0, gamesLost = 0, gamesPlayed = 0, totalGuesses = 0, streak = 0;
+
 
     // references fxml controller class members and handler methods
     @FXML private VBox root;
     @FXML private VBox notificationStack;
     @FXML private GridPane tileGrid;
     @FXML private GridPane keyboard1, keyboard2, keyboard3;
+
+    Scoreboard scoreboard = new Scoreboard();
+    Tutorial tutorial = new Tutorial();
 
     // loads txt file into string array
     public void loadDictonary() {
@@ -60,30 +67,32 @@ public class Controller {
         }
     }
 
-    // selects random word from dictionary as correctWord
+    // assigns correctWord as a random word from dictionary
     public void getWord() {
         correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
         System.out.println("correctWord = " + correctWord); // debug
     }
 
     public void loadTileGrid () {
-        //request focus to get physical keyboard input for word grid
+        // request focus to get physical keyboard input for word grid
         tileGrid.requestFocus();
-        tileGrid.setOnMouseClicked(e -> tileGrid.requestFocus());
         tileGrid.setOnKeyPressed(this::physicalKeyboardInput);
+        root.setOnMouseClicked(e -> tileGrid.requestFocus());
+
 
         // creates tiles (labels) to add to word grid
         for (int i = 1; i <= maxRows; i++) {
             for (int j = 1; j <= maxColumns; j++) {
                 Label tile = new Label();
                 tile.setText("");
-                tile.setId(j + "-" + i);
+                tile.setId(j + "-" + i); // id set to tile's column-row coordinates
                 tile.getStyleClass().add("tile");
                 tileGrid.add(tile, j, i);
             }
         }
     }
 
+    // creates virtual keyboard
     public void loadKeyboard() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < keyboardLetters[i].length; j++) {
@@ -123,13 +132,12 @@ public class Controller {
     }
 
     public void virtualKeyboardInput(ActionEvent event) {
-        // finds id of key pressed
+        // finds the button pressed and gets its id
         Button button = (Button) event.getSource();
         String id = button.getId();
 
-        //
         if (!disabled) {
-            if (id.length() == 1)
+            if (id.length() == 1) // not "DEL" and "ENTER" basically
                 onLetter(id);
             else if (id.equals("DEL"))
                 onDelete();
@@ -166,8 +174,6 @@ public class Controller {
             notification("Not in word list");
         else if (guessedWords.contains(currentWord))
             notification("Word already tried");
-
-        // else processes the input
         else {
             guessedWords.add(currentWord);
             setColors();
@@ -175,7 +181,7 @@ public class Controller {
             currentColumn = 1;
 
             // ends game if either input is correct or no more guesses left
-            if (correctWord.equals(currentWord))
+            if (currentWord.equals(correctWord))
                 endgame(1);
             else if (currentRow > maxRows)
                 endgame(0);
@@ -243,15 +249,14 @@ public class Controller {
             String letter = String.valueOf(currentWord.charAt(i));
             Label tile = (Label) tileGrid.lookup("#" + (i+1) + "-" + currentRow);
             Button key = keyHashMap.get(letter);
-            ObservableList<String> keystyle = key.getStyleClass();
 
             if (correctword.charAt(i) == 'g') {
                 tile.getStyleClass().add("greenTile");
-                keystyle.add("greenKey");
+                key.getStyleClass().add("greenKey");
             }
             else if (correctword.contains(letter)) {
                 tile.getStyleClass().add("yellowTile");
-                keystyle.add("yellowKey");
+                key.getStyleClass().add("yellowKey");
                 // eliminates 1 occurance of the out-of-position letter in the correct word
                 // result decreases the number of times that letter can occur to ensure the correct number of yellows
                 // ex. "APPLE" has 2 'P's, so there can only be 2 yellow or green tiles of P in the inputted word
@@ -259,7 +264,7 @@ public class Controller {
             }
             else {
                 tile.getStyleClass().add("grayTile");
-                keystyle.add("grayKey");
+                key.getStyleClass().add("grayKey");
             }
         }
     }
@@ -268,7 +273,7 @@ public class Controller {
         // updates user ingame statistics
         gamesPlayed++;
         if (game == 1) {
-            totalGusses += currentRow-1;
+            totalGuesses += currentRow-1;
             gamesWon++;
             streak ++;
         } else {
@@ -280,35 +285,21 @@ public class Controller {
         disabled = true;
     }
 
-    @FXML protected void help() {
-        Tutorial.display();
+    @FXML protected void help() throws IOException {
+        tutorial.display();
     }
-    @FXML protected void scoreboard() throws IOException {
-        Scoreboard.display();
 
-        double averageGuesses = (gamesWon == 0)? 0 : Math.floor(10.0*totalGusses/gamesWon)/10.0;
-        System.out.println("\n--- Scoreboard ---");
-        System.out.println("Games played:     " + gamesPlayed);
-        System.out.println("Games won:        " + gamesWon);
-        System.out.println("Games lost:       " + gamesLost);;
-        System.out.println("Streak:           " + streak);
-        System.out.println("Average guesses:  " + averageGuesses + "\n");
+    @FXML protected void scoreboard() throws IOException {
+        scoreboard.display(gamesPlayed, gamesWon, gamesLost, streak, totalGuesses);
     }
 
     @FXML protected void reset() {
-        // generates new random correct word, clears and resets all tracking varibles
-        getWord();
-        guessedWords.clear();
-        currentWord = "";
-        currentColumn = 1;
-        currentRow = 1;
-
         // clears text and styling of all tiles
         for (int i = 1; i <= maxRows; i++) {
             for (int j = 1; j <= maxColumns; j++) {
                 Label tile = (Label) tileGrid.lookup("#" + j + "-" + i);
-                tile.setText("");
                 tile.getStyleClass().clear();
+                tile.setText("");
                 tile.getStyleClass().add("tile");
             }
         }
@@ -319,18 +310,25 @@ public class Controller {
                 String keyLetter = keyboardLetters[i][j];
                 Button key = keyHashMap.get(keyLetter);
 
-                key.getStyleClass().clear();
-                key.getStyleClass().add("key");
-                if (i == 2 && (j == 0 || j == 8))
-                    key.getStyleClass().add("largeKey");
+                if (keyLetter.length() == 1) {
+                    key.getStyleClass().clear();
+                    key.getStyleClass().add("key");
+                }
             }
         }
 
+        // generates new random correct word, clears and resets all tracking varibles
+        getWord();
+        guessedWords.clear();
+        currentWord = "";
+        currentColumn = 1;
+        currentRow = 1;
+
         disabled = false;
         tileGrid.requestFocus();
-        tileGrid.setOnMouseClicked(e -> tileGrid.requestFocus());
     }
 
     @FXML protected void settings() {
+        Settings.display();
     }
 }

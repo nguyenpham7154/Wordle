@@ -1,18 +1,16 @@
 @font-face {
-    -fx-font-family: "Franklin";
-    src: url("franklin-normal-700.ttf");
+    src: url("franklin-normal-700.ttf") format("truetype");
 }
 
 @font-face {
-    -fx-font-family: "Karnak";
-    src: url("karnakcondensed-normal-700.ttf");
+    src: url("karnakcondensed-normal-700.ttf") format("truetype");
 }
 
 /* Global */
 .root {
     -fx-background-color: #121213;
     -fx-text-fill: white;
-    -fx-font-family: "FrankLin";
+    -fx-font-family: "NYTFranklin Bold", sans-serif;
     -fx-font-weight: bold;
     -fx-padding: 20px;
     -fx-alignment: top_center;
@@ -22,9 +20,9 @@ VBox, HBox, GridPane {
     -fx-alignment: center;
 }
 
-/* navbar */
-#navbar .label {
-    -fx-font-family: "Karnak";
+/* Navbars */
+.title {
+    -fx-font-family: "NYTKarnakCondensed";
     -fx-text-fill: white;
     -fx-font-size: 42px;
     -fx-font-weight: bold;
@@ -33,11 +31,11 @@ VBox, HBox, GridPane {
 #navbar .button {
     -fx-background-color: transparent;
     -fx-text-fill: white;
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-padding: 0 10;
 }
 
-#notificationStack .button{
+#notificationStack {
     -fx-alignment: top_center;
 }
 
@@ -51,7 +49,7 @@ VBox, HBox, GridPane {
     -fx-background-radius: 2px;
 }
 
-/* tile and key */
+/* tiles and keys */
 .tile {
     -fx-background-color: #121213;
     -fx-border-color: #3a3a3c;
@@ -110,5 +108,18 @@ VBox, HBox, GridPane {
 }
 
 /* scoreboard */
-.scoreboard {
+.scoreboardTable .label{
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+/* tutorial */
+.tutorialBody {
+    -fx-alignment: top-left;
+}
+
+.tutorialBody .label{
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-wrap-text: true;
 }

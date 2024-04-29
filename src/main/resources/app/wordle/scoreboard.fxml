@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+
+<VBox fx:id="root" spacing="40.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Scoreboard">
+    <VBox spacing="15.0">
+        <Label fx:id="title" text="Scoreboard" styleClass="title"/>
+        <Line endX="2000" strokeWidth="0.5" stroke="#818384"/>
+    </VBox>
+    <GridPane fx:id="table" styleClass="scoreboardTable" hgap="120" vgap="15"/>
+</VBox>

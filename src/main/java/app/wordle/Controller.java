@@ -3,9 +3,7 @@ package app.wordle;
 import javafx.animation.FadeTransition;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
-import javafx.css.StyleClass;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -41,10 +39,7 @@ public class Controller {
     // keeps track of which column and row currently on, used to identify corresponding tiles on gridpane
     private int currentRow = 1, currentColumn = 1;
     // input functions doesn't run when true
-    private Boolean disabled = false;
-    // user game statistics
-    public int gamesWon = 0, gamesLost = 0, gamesPlayed = 0, totalGuesses = 0, streak = 0;
-
+    public Boolean disabled = false;
 
     // references fxml controller class members and handler methods
     @FXML private VBox root;
@@ -67,7 +62,7 @@ public class Controller {
         }
     }
 
-    // assigns correctWord as a random word from dictionary
+    // assigns a random word from dictionary as correctWord
     public void getWord() {
         correctWord = dictionary.get((int) (Math.random() * (dictionary.size() + 1))).toUpperCase();
         System.out.println("correctWord = " + correctWord); // debug
@@ -132,7 +127,6 @@ public class Controller {
     }
 
     public void virtualKeyboardInput(ActionEvent event) {
-        // finds the button pressed and gets its id
         Button button = (Button) event.getSource();
         String id = button.getId();
 
@@ -180,12 +174,16 @@ public class Controller {
             currentRow++;
             currentColumn = 1;
 
-            // ends game if either input is correct or no more guesses left
-            if (currentWord.equals(correctWord))
-                endgame(1);
-            else if (currentRow > maxRows)
-                endgame(0);
-
+            // ends game and disables input if either input is correct or no more guesses left
+            if (currentWord.equals(correctWord)) {
+                scoreboard.updateScores(1, currentRow);
+                disabled = true;
+            }
+            else if (currentRow > maxRows) {
+                scoreboard.updateScores(0, currentRow);
+                notification(correctWord); // notifies user of correct word
+                disabled = true;
+            }
             currentWord = "";
         }
     }
@@ -236,7 +234,7 @@ public class Controller {
 
     public void setColors() {
         String correctword = ""; // temp variable
-        // marks letters in correct positions in the correct word
+        // marks letters in correct positions
         for (int i = 0; i < 5; i++) {
             if (currentWord.charAt(i) == correctWord.charAt(i))
                 correctword += 'g';
@@ -269,28 +267,13 @@ public class Controller {
         }
     }
 
-    public void endgame(int game) {
-        // updates user ingame statistics
-        gamesPlayed++;
-        if (game == 1) {
-            totalGuesses += currentRow-1;
-            gamesWon++;
-            streak ++;
-        } else {
-            gamesLost++;
-            streak = 0;
-            // notifies user of correct word
-            notification(correctWord);
-        }
-        disabled = true;
-    }
 
     @FXML protected void help() throws IOException {
         tutorial.display();
     }
 
     @FXML protected void scoreboard() throws IOException {
-        scoreboard.display(gamesPlayed, gamesWon, gamesLost, streak, totalGuesses);
+        scoreboard.display();
     }
 
     @FXML protected void reset() {
@@ -321,9 +304,10 @@ public class Controller {
         getWord();
         guessedWords.clear();
         currentWord = "";
-        currentColumn = 1;
-        currentRow = 1;
+        currentColumn = 1; currentRow = 1;
+        Timer.stop();
 
+        // re-enables input
         disabled = false;
         tileGrid.requestFocus();
     }

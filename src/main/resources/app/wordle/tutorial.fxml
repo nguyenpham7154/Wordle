@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+
+<VBox fx:id="root" spacing="40.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Scoreboard">
+    <VBox spacing="15.0">
+        <Label fx:id="title" text="Tutorial" styleClass="title"/>
+        <Line endX="2000" strokeWidth="0.5" stroke="#818384"/>
+    </VBox>
+
+    <VBox spacing="15.0" styleClass="tutorialBody">
+        <Label fx:id="p1"/>
+        <Label fx:id="p2"/>
+        <Label fx:id="p3"/>
+    </VBox>
+</VBox>

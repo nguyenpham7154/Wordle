@@ -1,7 +1,0 @@
-Main
-welcome introduction rules & menu
-dark/light mode switch
-
-Extras
-time, best time
-game mode for different word lengths

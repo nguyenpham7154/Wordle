@@ -1,16 +1,16 @@
-<?import javafx.geometry.*?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 
 <VBox fx:id="root" spacing="40.0" xmlns:fx="http://javafx.com/fxml" fx:controller="app.wordle.Controller">
-  <VBox>
+  <VBox spacing="15.0">
     <HBox fx:id="navbar">
       <styleClass/>
       <Button onAction="#help" text="Help"/>
       <Button onAction="#scoreboard" text="Scoreboard"/>
-      <Label text="Wordle"/>
+      <Label text="Wordle" styleClass="title"/>
       <Button onAction="#reset" text="Reset"/>
       <Button onAction="#settings" text="Settings"/>
     </HBox>

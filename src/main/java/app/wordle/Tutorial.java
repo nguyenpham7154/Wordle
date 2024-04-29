@@ -6,38 +6,22 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.event.ActionEvent;
-import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
 public class Tutorial {
     public void display() throws IOException{
-        VBox root = new VBox();
-        Label title = new Label("How to play");
-
-        GridPane gridpane = new GridPane();
-
-        root.getChildren().addAll(title, gridpane);
-
         Stage stage = new Stage();
-        Scene scene = new Scene(root, 460, 600);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("tutorial.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root, 460, 580);
 
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
         stage.setTitle("Tutorial");
         stage.setMinWidth(460);
-        stage.setMinHeight(600);
+        stage.setMinHeight(400);
         stage.setResizable(true);
         stage.setScene(scene);
         stage.show();
@@ -47,6 +31,16 @@ public class Tutorial {
             if (keycode == KeyCode.ESCAPE)
                 stage.close();
         });
+
+        Label p1 = (Label) root.lookup("#p1");
+        p1.setText("Guess the Wordle in 6 tries");
+        Label p2 = (Label) root.lookup("#p2");
+        p2.setText("Each guess must be a valid 5-letter word.\n" +
+                "The color of the tiles will change to show how close your guess was to the word.");
+        Label p3 = (Label) root.lookup("#p3");
+        p3.setText("• Green letters are in the word and in the correct spot.\n" +
+                "• Yellow letters are in the word but in the wrong spot.\n" +
+                "• Gray letters are not in the word in any spot.");
 
     }
 }

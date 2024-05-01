@@ -22,6 +22,7 @@ import java.util.HashMap;
 import javafx.util.Duration;
 
 public class Controller {
+    // arranged into 3 gridpanes to reproduce qwerty keyboard layout
     private final String[][] keyboardLetters = {
             {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
             {"A", "S", "D", "F", "G", "H", "J", "K", "L"},
@@ -50,7 +51,7 @@ public class Controller {
     Scoreboard scoreboard = new Scoreboard();
     Tutorial tutorial = new Tutorial();
 
-    // loads txt file into string array
+    // fills string array with words from txt file
     public void loadDictonary() {
         try {
             Scanner scanner = new Scanner(new File("src/main/resources/app/wordle/dictionary.txt"));
@@ -72,6 +73,7 @@ public class Controller {
         // request focus to get physical keyboard input for word grid
         tileGrid.requestFocus();
         tileGrid.setOnKeyPressed(this::physicalKeyboardInput);
+        // returns focus to grid every click
         root.setOnMouseClicked(e -> tileGrid.requestFocus());
 
 
@@ -100,6 +102,7 @@ public class Controller {
                 key.setOnAction(this::virtualKeyboardInput);
                 keyHashMap.put(keyLetter, key);
 
+                // arranges into respective rows
                 if (i == 0)
                     keyboard1.add(key, j, 0);
                 else if (i == 1)
@@ -114,6 +117,7 @@ public class Controller {
         }
     }
 
+    // handles physical keyboard inputs
     public void physicalKeyboardInput(KeyEvent keyEvent) {
         KeyCode keycode = keyEvent.getCode();
         if (!disabled) {
@@ -126,12 +130,13 @@ public class Controller {
         }
     }
 
+    // handles virtual button inputs
     public void virtualKeyboardInput(ActionEvent event) {
         Button button = (Button) event.getSource();
         String id = button.getId();
 
         if (!disabled) {
-            if (id.length() == 1) // not "DEL" and "ENTER" basically
+            if (id.length() == 1) // not del or enter basically
                 onLetter(id);
             else if (id.equals("DEL"))
                 onDelete();
@@ -171,6 +176,7 @@ public class Controller {
         else {
             guessedWords.add(currentWord);
             setColors();
+            // first column of the next row
             currentRow++;
             currentColumn = 1;
 
@@ -188,6 +194,7 @@ public class Controller {
         }
     }
 
+    // keeps track how many labels are present
     private int n = 0;
 
     public void notification(String message) {
@@ -195,9 +202,9 @@ public class Controller {
         if (n < 8) {
             Label popup = new Label(message);
             popup.getStyleClass().add("popup");
-            // adds labels to top of vbox
+            // adds labels to the top of the vbox
             notificationStack.getChildren().add(0, popup); n++;
-            // fades completely in 0.5s
+            // fade transition runs for in 0.5s
             FadeTransition fade = new FadeTransition(Duration.millis(500), popup);
             fade.setFromValue(1.0);
             fade.setToValue(0.0);
@@ -216,7 +223,7 @@ public class Controller {
         }
     }
 
-    // binary search algorithm
+    // binary search algorithm for better efficiency because why not
     private boolean search(ArrayList<String> list, String target) {
         int low = 0, high = list.size() - 1;
         while (low <= high) {
@@ -293,7 +300,7 @@ public class Controller {
                 String keyLetter = keyboardLetters[i][j];
                 Button key = keyHashMap.get(keyLetter);
 
-                if (keyLetter.length() == 1) {
+                if (keyLetter.length() == 1) { // ignores del and enter
                     key.getStyleClass().clear();
                     key.getStyleClass().add("key");
                 }
@@ -305,7 +312,10 @@ public class Controller {
         guessedWords.clear();
         currentWord = "";
         currentColumn = 1; currentRow = 1;
+        
+        // reset timer without adding total time 
         Timer.stop();
+        Timer.start();
 
         // re-enables input
         disabled = false;
@@ -313,6 +323,6 @@ public class Controller {
     }
 
     @FXML protected void settings() {
-        Settings.display();
+        Settings.display(); // later feature
     }
 }

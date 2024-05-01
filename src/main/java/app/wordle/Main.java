@@ -34,6 +34,7 @@ public class Main extends Application {
 
         stage.show();
         controller.tutorial.display();
+        Timer.start();
 
         // ESC shortcut to close window
         scene.setOnKeyPressed(e -> {
